@@ -1,0 +1,203 @@
+﻿@page "/"
+@inject NavigationManager NavManager
+@inject AccountStateService AccountState
+@using ChatOnline.Services;
+
+<PageTitle>chat.online</PageTitle>
+
+@if (!_registered)
+{
+    <div class="card" style="width: 100vw; margin-top: 1rem;">
+        <img class="card-img-top" src="https://t4.ftcdn.net/jpg/03/41/47/73/360_F_341477352_FPoRvWnWWqdzVFnIWn3on34gYWaSEX2K.jpg" alt="Card image cap">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">Registration</h5>
+                            <div>
+                                <div class="form-group">
+                                    <label for="exampleInputEmail2">Email address</label>
+                                    <input @bind="_registerUser.Email" type="email" class="form-control" id="exampleInputEmail2" aria-describedby="emailHelp" placeholder="Email">
+                                    @if (_isEmailEmpty)
+                                    {
+                                        <p style="color: red;">This field cannot be empty</p>
+                                    }
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputFullName">Full Name</label>
+                                    <input @bind="_registerUser.FullName" type="text" class="form-control" id="exampleInputFullName" placeholder="Full Name">
+                                    @if (_isFullnameEmpty)
+                                    {
+                                        <p style="color: red;">This field cannot be empty</p>
+                                    }
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputUsername">Username</label>
+                                    <input @bind="_registerUser.Username" type="text" class="form-control" id="exampleInputUsername" placeholder="Username">
+                                    <small id="usernameHelp" class="form-text text-muted">Username must be 0-9, A-z.</small>
+                                    @if (_isUsernameEmpty)
+                                    {
+                                        <p style="color: red;">This field cannot be empty</p>
+                                    }
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputPassword2">Password</label>
+                                    <input @bind="_registerUser.Password" type="password" class="form-control" id="exampleInputPassword2" placeholder="Password">
+                                    @if (_isPasswordEmpty)
+                                    {
+                                        <p style="color: red;">This field cannot be empty</p>
+                                    }
+                                </div>
+                            </div>
+                            <div class="d-flex flex-column">
+                                <div>@($"User:")</div>
+                                <div>@($"Id:{_loginUser.Id}")</div>
+                                <div>@($"Email address:{_registerUser.Email}")</div>
+                                <div>@($"Full Name:{_registerUser.FullName}")</div>
+                                <div>@($"Username:{_registerUser.Username}")</div>
+                                <div>@($"Password:{_registerUser.Password}")</div>
+
+                                <button @onclick="RegisterUserTF" class="btn btn-primary">Register</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="card" style="width: 100vw; margin-top: 1rem;">
+        <img class="card-img-top" src="https://t4.ftcdn.net/jpg/03/41/47/73/360_F_341477352_FPoRvWnWWqdzVFnIWn3on34gYWaSEX2K.jpg" alt="Card image cap">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">Authorization</h5>
+                            <div>
+                                <div class="form-group">
+                                    <label for="exampleInputUsername">Username</label>
+                                    <input @bind="_loginUser.Username" type="text" class="form-control" id="exampleInputUsername" placeholder="Username">
+                                    <small id="usernameHelp" class="form-text text-muted">Username must be 0-9, A-z.</small>
+
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputPassword1">Password</label>
+                                    <input @bind="_loginUser.Password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleStatus">Status for today</label>
+                                    <select @bind="_loginUser.Status" class="form-control" id="exampleStatus">
+                                        <option value="cringe">Cringe</option>
+                                        <option value="slayyy">Slayyy</option>
+                                        <option value="genius">Genius</option>
+                                        <option value="Talgat Ramilevich">Talgat Ramilevich</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleAvatar">Avatar for today</label>
+                                    <select @bind="_loginUser.Avatar" class="form-control" id="exampleAvatar">
+                                        <option value="https://animals.pibig.info/uploads/posts/2023-04/1681462268_animals-pibig-info-p-rzhachnie-kotiki-zhivotnie-instagram-28.jpg">Avatar 1</option>
+                                        <option value="https://celes.club/uploads/posts/2022-10/1666834141_2-celes-club-p-kotik-v-odeyalke-pinterest-2.jpg">Avatar 2</option>
+                                        <option value="https://animals.pibig.info/uploads/posts/2023-04/1681462289_animals-pibig-info-p-rzhachnie-kotiki-zhivotnie-instagram-16.jpg">Avatar 3</option>
+                                        <option value="https://www.meme-arsenal.com/memes/d92c38e0bd0d8bfdc2d1b33b263ddd88.jpg">Avatar 4</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    @if (!string.IsNullOrEmpty(_loginUser.Avatar))
+                                    {
+                                        <img src="@_loginUser.Avatar" alt="Avatar" style="max-width: 200px; max-height: 200px;" />
+                                    }
+                                </div>
+                            </div>
+                            <div class="d-flex flex-column">
+                                <div>@($"User:")</div>
+                                <div>@($"Id:{_loginUser.Id}")</div>
+                                <div>@($"Username:{_loginUser.Username}")</div>
+                                <div>@($"Password:{_loginUser.Password}")</div>
+                                <div>@($"Status:{_loginUser.Status}")</div>
+                                <button @onclick="Go2Chat" href="#" class="btn btn-primary">Login</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+@code {
+    private LoginUser _loginUser = new LoginUser("", "", "", "");
+    private RegisterUser _registerUser = new RegisterUser("", "", "", "");
+
+    private bool _registered = false;
+    private bool _isPasswordEmpty = false;
+    private bool _isUsernameEmpty = false;
+    private bool _isFullnameEmpty = false;
+    private bool _isEmailEmpty = false;
+    public void RegisterUserTF()
+    {
+        if (string.IsNullOrEmpty(_registerUser.Username))
+        {
+            _isUsernameEmpty = true;
+            _isPasswordEmpty = true;
+            _isFullnameEmpty = true;
+            _isEmailEmpty = true;
+        }
+        else
+        {
+            _isUsernameEmpty = false;
+            _isPasswordEmpty = false;
+            _isFullnameEmpty = false;
+            _isEmailEmpty = false;
+            _registered = true;
+        }
+    }
+
+    public void Go2Chat()
+    {
+        AccountState.Id = _loginUser.Id;
+        AccountState.Username = _loginUser.Username;
+        AccountState.Status = _loginUser.Status;
+        AccountState.Avatar = _loginUser.Avatar;
+        NavManager.NavigateTo("/chat");
+    }
+
+    class LoginUser
+    {
+        public LoginUser(string password, string username, string status, string avatar)
+        {
+            Id = Guid.NewGuid().ToString();
+            Username = username;
+            Password = password;
+            Status = status;
+            Avatar = avatar;
+        }
+        public string Id { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public string Status { get; set; }
+        public string Avatar { get; set; }
+    }
+
+    class RegisterUser
+    {
+        public RegisterUser(string email, string password, string fullname, string username)
+        {
+            Id = Guid.NewGuid().ToString();
+            Email = email;
+            Password = password;
+            FullName = fullname;
+            Username = username;
+        }
+        public string Id { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public string FullName { get; set; }
+        public string Username { get; set; }
+    }
+}

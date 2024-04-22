@@ -1,0 +1,92 @@
+﻿@page "/chat"
+@inject AccountStateService AccountState
+@using ChatOnline.Services;
+
+<h3>ChatPage</h3>
+
+<div>
+    <p>User ID: @AccountState.Id</p>
+    <p>Username: @AccountState.Username</p>
+    <p>Status: @AccountState.Status</p>
+    @if (!string.IsNullOrEmpty(AccountState.Avatar))
+    {
+        <img src="@AccountState.Avatar" alt="Avatar" style="max-width: 200px; max-height: 200px;" />
+    }
+</div>
+
+<div>
+    <input @bind="_userMessage" type="text" class="form-control" placeholder="Type a message..." @onkeypress="SendMessage" />
+    <button @onclick="SortByDateTime" class="btn btn-primary">Sort by Date/Time</button>
+    <button @onclick="SortByAuthor" class="btn btn-primary">Sort by Author</button>
+    <ul>
+        @foreach (var chatMessage in _chatMessages)
+        {
+            <li>
+                <strong>@chatMessage.Author (@chatMessage.Id):</strong> @chatMessage.Message
+                <span class="text-muted">(@chatMessage.Timestamp.ToString("dd/MM/yyyy HH:mm:ss"))</span>
+            </li>
+        }
+    </ul>
+</div>
+
+@code {
+    private string _userMessage;
+    private List<ChatMessage> _chatMessages = new List<ChatMessage>();
+    private int _messageIdCounter = 1;
+
+    private void SendMessage(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter" && !string.IsNullOrWhiteSpace(_userMessage))
+        {
+            var botResponse = GetBotResponse(_userMessage);
+            _chatMessages.Add(new ChatMessage("You", _userMessage, DateTime.Now, _messageIdCounter++));
+            _chatMessages.Add(new ChatMessage("Chatbot", botResponse, DateTime.Now, _messageIdCounter++));
+            _userMessage = "";
+        }
+    }
+
+    private string GetBotResponse(string userMessage)
+    {
+        switch (userMessage.ToLower())
+        {
+            case "привет":
+                return "Привет! О чем вы хотите поговорить?";
+            case "как дела":
+                return "У меня всё отлично! А у вас как дела?";
+            case "хорошо":
+                return "Это прекрасно! Чаще улыбайтесь! :)";
+            case "плохо":
+                return "Это грустно. Надеюсь скоро всё наладится :(";
+            case "пока":
+                return "Пока-пока!";
+            default:
+                return "Извините! Я пока плохо понимаю что вы говорите, поэтому не могу ответить на ваше сообщение :(";
+        }
+    }
+
+    private void SortByDateTime()
+    {
+        _chatMessages.Sort((msg1, msg2) => msg1.Timestamp.CompareTo(msg2.Timestamp));
+    }
+
+    private void SortByAuthor()
+    {
+        _chatMessages.Sort((msg1, msg2) => msg1.Author.CompareTo(msg2.Author));
+    }
+
+    public class ChatMessage
+    {
+        public int Id { get; set; }
+        public string Author { get; set; }
+        public string Message { get; set; }
+        public DateTime Timestamp { get; set; }
+
+        public ChatMessage(string author, string message, DateTime timestamp, int id)
+        {
+            Author = author;
+            Message = message;
+            Timestamp = timestamp;
+            Id = id;
+        }
+    }
+}
