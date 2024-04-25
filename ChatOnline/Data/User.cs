@@ -1,6 +1,6 @@
 ﻿namespace ChatOnline.Data
 {
-    class User
+    public class User
     {
         public User(string email, string fullname, string password, string username, string status, string avatar)
         {

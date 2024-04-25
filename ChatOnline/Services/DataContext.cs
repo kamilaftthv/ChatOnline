@@ -1,69 +1,53 @@
-﻿using System.Collections.Generic;
-using System;
+﻿using ChatOnline.Data;
 
-namespace ChatOnline.Data
+namespace ChatOnline.Services
 {
-    public class DataContext
+    public class UserRepository
     {
-        private List<User> _users;
-        private List<User> _chats;
-
-        public DataContext()
-        {
-            _users = new List<User>();
-            _chats = new List<User>();
-        }
+        private List<User> _users = new List<User>();
 
         public void AddUser(User user)
         {
             _users.Add(user);
         }
 
-        public void RemoveUser(string userId)
+        public void DeleteUser(User user)
         {
-            var userToRemove = _users.FirstOrDefault(u => u.Id == userId);
-            if (userToRemove != null)
-            {
-                _users.Remove(userToRemove);
-            }
+            _users.Remove(user);
         }
-
-        public void UpdateUser(User updatedUser)
+        public void UpdateUser(User user, string username, string status, string avatar)
         {
-            var userToUpdate = _users.FirstOrDefault(u => u.Id == updatedUser.Id);
-            if (userToUpdate != null)
-            {
-                userToUpdate.Email = updatedUser.Email;
-                userToUpdate.FullName = updatedUser.FullName;
-                userToUpdate.Username = updatedUser.Username;
-                userToUpdate.Password = updatedUser.Password;
-                userToUpdate.Status = updatedUser.Status;
-                userToUpdate.Avatar = updatedUser.Avatar;
-            }
-        }
-
-        public void AddChat(Chat chat)
-        {
-            _chats.Add(chat);
-        }
-
-        public void RemoveChat(string chatId)
-        {
-            var chatToRemove = _chats.FirstOrDefault(c => c.Id == chatId);
-            if (chatToRemove != null)
-            {
-                _chats.Remove(chatToRemove);
-            }
-        }
-
-        public void UpdateChat(Chat updatedChat)
-        {
-            var chatToUpdate = _chats.FirstOrDefault(c => c.Id == updatedChat.Id);
-            if (chatToUpdate != null)
-            {
-                chatToUpdate.Messages = updatedChat.Messages;
-                chatToUpdate.Users = updatedChat.Users;
-            }
+            user.Username = username;
+            user.Status = status;
+            user.Avatar = avatar;
         }
     }
+
+    public class Chat
+    {
+        public User User { get; }
+        public List<ChatMessage> Messages { get; } = new List<ChatMessage>();
+
+        public void UpdateMessages(List<ChatMessage> messages)
+        {
+            Messages.Clear();
+            Messages.AddRange(messages);
+        }
+
+        public void AddMessage(ChatMessage message)
+        {
+            Messages.Add(message);
+        }
+
+        public void DeleteMessage(ChatMessage message)
+        {
+            Messages.Remove(message);
+        }
+
+        public Chat(User user)
+        {
+            User = user;
+        }
+    }
+
 }
