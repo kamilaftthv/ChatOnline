@@ -149,7 +149,9 @@
         AccountState.Username = user.Username;
         AccountState.Status = user.Status;
         AccountState.Avatar = user.Avatar;
-
+        DataContext.AddUser(user); 
+        var chatForUser = UserContext.GetChatForUser(user);
+        _chatMessages = chatForUser.Messages;
         NavManager.NavigateTo("/chat");
     }
 
