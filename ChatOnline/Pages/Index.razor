@@ -2,6 +2,7 @@
 @inject NavigationManager NavManager
 @inject AccountStateService AccountState
 @inject UserContext UserContext
+@inject DataContext DataContext
 @using ChatOnline.Services;
 @using ChatOnline.Data;
 @using System.Text.RegularExpressions;
@@ -181,6 +182,7 @@ else
         {
             UserContext.CreateUser(_user.Email, _user.FullName, _user.Password, _user.Username, _user.Status, _user.Avatar);
             _registered = true;
+            DataContext.AddUser(_user);
         }
     }
 

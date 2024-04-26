@@ -2,13 +2,15 @@
 
 namespace ChatOnline.Services
 {
-    public class UserRepository
+    public class DataContext
     {
         private List<User> _users = new List<User>();
+        private Dictionary<User, Chat> _userChats = new Dictionary<User, Chat>();
 
         public void AddUser(User user)
         {
             _users.Add(user);
+            _userChats[user] = new Chat(user);
         }
 
         public void DeleteUser(User user)
@@ -22,32 +24,4 @@ namespace ChatOnline.Services
             user.Avatar = avatar;
         }
     }
-
-    public class Chat
-    {
-        public User User { get; }
-        public List<ChatMessage> Messages { get; } = new List<ChatMessage>();
-
-        public void UpdateMessages(List<ChatMessage> messages)
-        {
-            Messages.Clear();
-            Messages.AddRange(messages);
-        }
-
-        public void AddMessage(ChatMessage message)
-        {
-            Messages.Add(message);
-        }
-
-        public void DeleteMessage(ChatMessage message)
-        {
-            Messages.Remove(message);
-        }
-
-        public Chat(User user)
-        {
-            User = user;
-        }
-    }
-
 }

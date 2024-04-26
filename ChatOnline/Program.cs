@@ -12,6 +12,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<AccountStateService>();
 builder.Services.AddSingleton<UserContext>();
+builder.Services.AddSingleton<DataContext>();
 
 
 var app = builder.Build();
