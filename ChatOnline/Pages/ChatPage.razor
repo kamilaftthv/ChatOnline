@@ -10,28 +10,41 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-3 bg-light">
-            <div>
-                <input @bind="_searchTerm" type="text" class="form-control" placeholder="Search users..." />
-                <select class="form-control" @onchange="SearchUsers">
-                    <option value="">Select user</option>
-                    @foreach (var user in _searchResults)
-                    {
-                        <option value="@user.Id">@user.Username</option>
-                    }
-                </select>
-            </div>
-            <button class="btn btn-primary mt-3 ml-3">Add accaunt</button>
-            <div class="mt-3 ml-3">
-                <h5>Registered Accounts:</h5>
-                @foreach (var user in UserContext.GetUsers())
-                {
-                    <div class="mb-2">
-                        <button @onclick="() => SwitchAccount(user)" class="btn btn-light">@user.Username</button>
-                        <button @onclick="() => UpdateAccount(user)" class="btn btn-outline-primary btn-sm">Update</button>
-                        <button @onclick="() => DeleteAccount(user)" class="btn btn-outline-danger btn-sm ml-1">Delete</button>
+            <p>
+                <h5>Search</h5>
+                <div class="input-group">
+                    <input @bind="_searchUsername" type="text" class="form-control" placeholder="Enter username...">
+                    <div class="input-group-append">
+                        <button @onclick="SearchAccounts" class="btn btn-primary">Search</button>
                     </div>
+                </div>
+                @if (_searchResults.Any())
+                {
+                    <h5>Search Results:</h5>
+                    <ul class="list-group">
+                        @foreach (var user in _searchResults)
+                        {
+                            <li class="list-group-item">
+                                <span style="cursor: pointer;" @onclick="() => SwitchAccount(user)">@user.Username</span>
+                                <button class="btn btn-outline-primary btn-sm" @onclick="() => UpdateAccount(user)">Update</button>
+                                <button class="btn btn-outline-danger btn-sm ml-1" @onclick="() => DeleteAccount(user)">Delete</button>
+                            </li>
+                        }
+                    </ul>
                 }
-            </div>
+            </p>
+            <p>
+                <button class="btn btn-primary mt-3 ml-3">Add account</button>
+            </p>
+            <h5>Accounts:</h5>
+            @foreach (var user in UserContext.GetUsers())
+            {
+                <div class="mb-2">
+                    <span style="cursor: pointer;" @onclick="() => SwitchAccount(user)">@user.Username</span>
+                    <button @onclick="() => UpdateAccount(user)" class="btn btn-outline-primary btn-sm">Update</button>
+                    <button @onclick="() => DeleteAccount(user)" class="btn btn-outline-danger btn-sm ml-1">Delete</button>
+                </div>
+            }
             <div class="mt-3 ml-3">
                 <p>User ID: @AccountState.Id</p>
                 <p>Username: @AccountState.Username</p>
@@ -77,8 +90,18 @@
 @code {
     private string _userMessage;
     private List<ChatMessage> _chatMessages = new List<ChatMessage>();
-    private int _messageIdCounter = 1;
+    private int _messageIdCounter = 1; 
+    private string _searchUsername = "";
+    private List<User> _searchResults = new List<User>();
 
+    private void SearchAccounts()
+    {
+        _searchResults.Clear();
+        if (!string.IsNullOrEmpty(_searchUsername))
+        {
+            _searchResults = UserContext.GetUsers().Where(u => u.Username.Contains(_searchUsername)).OrderBy(u => u.Username).ToList();
+        }
+    }
     private void SendMessage()
     {
         if (!string.IsNullOrWhiteSpace(_userMessage))
@@ -129,14 +152,6 @@
         NavManager.NavigateTo("/chat");
     }
 
-    private string _searchTerm = "";
-    private List<User> _searchResults = new List<User>();
-
-    private void SearchUsers(ChangeEventArgs e)
-    {
-        string searchTerm = e.Value.ToString();
-        _searchResults = UserContext.SearchUsers(searchTerm);
-    }
 
     private void UpdateAccount(User user)
     {
