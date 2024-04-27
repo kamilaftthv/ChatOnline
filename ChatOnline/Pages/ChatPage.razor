@@ -112,7 +112,7 @@
         _searchResults.Clear();
         if (!string.IsNullOrEmpty(_searchUsername))
         {
-            _searchResults = UserContext.GetUsers().Where(u => u.Username.Contains(_searchUsername)).OrderBy(u => u.Username).ToList();
+            _searchResults = UserContext.GetUsers().Where(u => u.Username.Contains(_searchUsername)).ToList();
         }
     }
     private void SendMessage()
