@@ -16,12 +16,38 @@ namespace ChatOnline.Services
         public void DeleteUser(User user)
         {
             _users.Remove(user);
+            _userChats.Remove(user);
         }
-        public void UpdateUser(User user, string username, string status, string avatar)
+        public void UpdateUser(User user)
         {
-            user.Username = username;
-            user.Status = status;
-            user.Avatar = avatar;
+            var existingUser = _users.FirstOrDefault(u => u.Id == user.Id);
+            if (existingUser != null)
+            {
+                existingUser.FullName = user.FullName;
+                existingUser.Email = user.Email;
+                existingUser.Password = user.Password;
+                existingUser.Status = user.Status;
+                existingUser.Avatar = user.Avatar;
+            }
+        }
+        public void AddChat(User user)
+        {
+            if (!_userChats.ContainsKey(user))
+            {
+                var newChat = new Chat(user);
+                _userChats[user] = newChat;
+            }
+        }
+        public void DeleteChat(Chat chat)
+        {
+            chat.Messages.Clear();
+        }
+        public void UpdateChat(Chat chat)
+        {
+            if (chat.Messages.Count > 0)
+            {
+                chat.Messages.RemoveAt(chat.Messages.Count - 1);
+            }
         }
     }
 }

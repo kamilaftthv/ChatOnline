@@ -62,3 +62,18 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+.chat-create-field {
+    width: 100%;
+    height: calc(100vh - 120px);
+    border: 2px dashed #ccc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 50px;
+}
+
+    .chat-create-field:hover {
+        background-image: url('https://i.ytimg.com/vi/RLVhnxzNYSQ/maxresdefault.jpg');
+    }

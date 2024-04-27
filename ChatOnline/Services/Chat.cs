@@ -13,11 +13,6 @@ namespace ChatOnline.Services
             Messages.AddRange(messages);
         }
 
-        public void AddMessage(ChatMessage message)
-        {
-            Messages.Add(message);
-        }
-
         public void DeleteMessage(ChatMessage message)
         {
             Messages.Remove(message);

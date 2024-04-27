@@ -35,7 +35,7 @@
                 }
             </p>
             <p>
-                <button class="btn btn-primary mt-3 ml-3">Add account</button>
+                <button @onclick="GoToReg" class="btn btn-primary mt-3 ml-3">Add account</button>
             </p>
             <h5>Accounts:</h5>
             @foreach (var user in UserContext.GetUsers())
@@ -57,36 +57,46 @@
             </div>
         </div>
         <div class="col-md-9">
-            <h3 class="mt-3">Chat</h3>
-            <div class="chat-container mt-3">
-                <ul class="list-unstyled">
-                    <p>
-                    <div class="input-group">
-                        <input @bind="_userMessage" type="text" class="form-control" placeholder="Type a message...">
-                        <div class="input-group-append">
-                            <button @onclick="SendMessage" class="btn btn-primary" type="button">Send</button>
-                        </div>
-                    </div>
-                    </p>
-                    <p>
-                    <ul>
-                        @foreach (var chatMessage in _chatMessages)
-                        {
-                            <li>
-                                <strong>@chatMessage.Author (@chatMessage.Id):</strong> @chatMessage.Message
-                                <span class="text-muted">(@chatMessage.Timestamp.ToString("dd/MM/yyyy HH:mm:ss"))</span>
-                            </li>
-                        }
+            @if (!chatCreated)
+            {
+                <div class="chat-create-field" @onclick="CreateNewChat">
+                    <p class="text-center">Click here to create a new chat</p>
+                </div>
+            }
+            @if (chatCreated)
+            {
+                <h3 class="mt-3">Chat</h3>
+                <div class="chat-container mt-3">
+                    <ul class="list-unstyled">
+                        <p>
+                            <div class="input-group">
+                                <input @bind="_userMessage" type="text" class="form-control" placeholder="Type a message...">
+                                <div class="input-group-append">
+                                    <button @onclick="SendMessage" class="btn btn-primary" type="button">Send</button>
+                                </div>
+                            </div>
+                        </p>
+                        <p>
+                            <ul>
+                                @foreach (var chatMessage in _chatMessages)
+                                {
+                                    <li>
+                                        <strong>@chatMessage.Author (@chatMessage.Id):</strong> @chatMessage.Message
+                                        <span class="text-muted">(@chatMessage.Timestamp.ToString("dd/MM/yyyy HH:mm:ss"))</span>
+                                    </li>
+                                }
+                            </ul>
+                        </p>
+                        <button @onclick="SortByDateTime" class="btn btn-primary">Sort by Date/Time</button>
+                        <button @onclick="SortByAuthor" class="btn btn-primary">Sort by Author</button>
+                        <button @onclick="DelChat" class="btn btn-primary">Delete Chat</button>
+                        <button @onclick="UpdateChatLM" class="btn btn-primary">Update Chat (delete last message)</button>
                     </ul>
-                    </p>
-                    <button @onclick="SortByDateTime" class="btn btn-primary">Sort by Date/Time</button>
-                    <button @onclick="SortByAuthor" class="btn btn-primary">Sort by Author</button>
-                </ul>
-            </div>
+                </div>
+            }
         </div>
     </div>
 </div>
-
 
 @code {
     private string _userMessage;
@@ -94,6 +104,8 @@
     private int _messageIdCounter = 1; 
     private string _searchUsername = "";
     private List<User> _searchResults = new List<User>();
+    private bool chatCreated = false;
+    private Chat _chat;
 
     private void SearchAccounts()
     {
@@ -154,13 +166,65 @@
         _chatMessages = chatForUser.Messages;
         NavManager.NavigateTo("/chat");
     }
-
+    private void GoToReg()
+    {
+        NavManager.NavigateTo("/");
+    }
+    private User _user = new User("", "", "", "", "", "");
 
     private void UpdateAccount(User user)
     {
+        _user = user;
+        NavManager.NavigateTo($"/?userId={user.Id}");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var userId = NavManager.Uri.Split('=').Last();
+        var user = UserContext.GetUsers().FirstOrDefault(u => u.Id == userId);
+        if (user != null)
+        {
+            _user = user;
+        }
+        else
+        {
+        }
+    }
+
+    private void SaveChanges()
+    {
+        DataContext.UpdateUser(_user);
+        NavManager.NavigateTo("/chat");
     }
 
     private void DeleteAccount(User user)
     {
+        Console.WriteLine($"удаляется или не {user.Username}");
+        UserContext.DeleteUser(user);
+    }
+
+    private void CreateNewChat()
+    {
+        DataContext.AddChat(_user);
+        chatCreated = true;
+    }
+    private void DelChat()
+    {
+        //DataContext.DeleteChat(_chat);
+        _chatMessages.Clear();
+        chatCreated = false;
+    }
+    private void UpdateChatLM()
+    {
+        Console.WriteLine("апдейт или не");
+        if (_chat != null)
+        {
+            //DataContext.UpdateChat(_chat);
+            if (_chat.Messages.Count > 0)
+            {
+                _chat.Messages.RemoveAt(_chat.Messages.Count - 1);
+            }
+            _chatMessages = _chat.Messages;
+        }
     }
 }

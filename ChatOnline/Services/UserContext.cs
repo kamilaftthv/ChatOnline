@@ -48,5 +48,26 @@ namespace ChatOnline.Services
                 return newChat;
             }
         }
+        public void DeleteUser(User user)
+        {
+            _users.Remove(user);
+            _userChats.Remove(user);
+        }
+        public void UpdateUser(User user)
+        {
+            var existingUser = _users.FirstOrDefault(u => u.Id == user.Id);
+            if (existingUser != null)
+            {
+                existingUser.FullName = user.FullName;
+                existingUser.Email = user.Email;
+                existingUser.Password = user.Password;
+                existingUser.Status = user.Status;
+                existingUser.Avatar = user.Avatar;
+            }
+        }
+        public void DeleteChat(Chat chat)
+        {
+            chat.Messages.Clear();
+        }
     }
 }
