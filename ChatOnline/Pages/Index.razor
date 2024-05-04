@@ -11,7 +11,7 @@
 
 @if (!_registered)
 {
-    <div class="card" style="width: 100vw; margin-top: 1rem;">
+    <div class="card" style="width: 100vw">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-md-6">
@@ -22,18 +22,20 @@
                             <div>
                                 <div class="form-group">
                                     <p>
-                                    <label for="exampleAvatar">Choose Avatar</label>
+                                        <label for="exampleAvatar">Choose Avatar</label>
+                                    <p>
                                     <center>
                                         @if (!string.IsNullOrEmpty(_user.Avatar))
                                         {
                                             <img src="@_user.Avatar" alt="Avatar" style="max-width: 150px; max-height: 150px;" />
                                         }
                                     </center>
+                                    </p>
                                     <select @bind="_user.Avatar" class="form-control" id="exampleAvatar">
-                                        <option value="https://animals.pibig.info/uploads/posts/2023-04/1681462268_animals-pibig-info-p-rzhachnie-kotiki-zhivotnie-instagram-28.jpg">Avatar 1</option>
-                                        <option value="https://celes.club/uploads/posts/2022-10/1666834141_2-celes-club-p-kotik-v-odeyalke-pinterest-2.jpg">Avatar 2</option>
-                                        <option value="https://animals.pibig.info/uploads/posts/2023-04/1681462289_animals-pibig-info-p-rzhachnie-kotiki-zhivotnie-instagram-16.jpg">Avatar 3</option>
-                                        <option value="https://www.meme-arsenal.com/memes/d92c38e0bd0d8bfdc2d1b33b263ddd88.jpg">Avatar 4</option>
+                                        <option value="https://animals.pibig.info/uploads/posts/2023-04/1681462268_animals-pibig-info-p-rzhachnie-kotiki-zhivotnie-instagram-28.jpg">Bread cat</option>
+                                        <option value="https://celes.club/uploads/posts/2022-10/1666834141_2-celes-club-p-kotik-v-odeyalke-pinterest-2.jpg">Sleppy cat</option>
+                                        <option value="https://animals.pibig.info/uploads/posts/2023-04/1681462289_animals-pibig-info-p-rzhachnie-kotiki-zhivotnie-instagram-16.jpg">Funny cat</option>
+                                        <option value="https://www.meme-arsenal.com/memes/d92c38e0bd0d8bfdc2d1b33b263ddd88.jpg">Cool cat</option>
                                     </select>
                                     </p>
                                 </div>
@@ -114,7 +116,7 @@
 }
 else
 {
-    <div class="card" style="width: 100vw; margin-top: 1rem;">
+    <div class="card" style="width: 100vw">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-md-6">
